@@ -4,6 +4,7 @@
 import math
 import random
 import time
+import pigpio
 
 def Q1(x):
 	if (x < 0):
@@ -33,6 +34,8 @@ def Q4(x):
 		x = 1
 	return 1 - math.sqrt(1 - (x ** 2))
 
+pi = pigpio.pi()
+
 pwm_min = 64
 pwm_max = 255
 pwm_mid = (pwm_min + pwm_max) / 2
@@ -48,7 +51,8 @@ plot_y = 0
 
 while True:
 	start = time.time()
-	msecs_timeout_q = (msecs_timeout / 4) #* random.random()
+	# random from 500 to 1500
+	msecs_timeout_q = ((msecs_timeout / 2) * random.random()) + msecs_timeout / 2
 	while True:
 		current = time.time()
 		msecs_diff = (current - start) * 1000
@@ -70,4 +74,5 @@ while True:
 			elif state == 3 :
 				plot_y = Q3(plot_x)
 				pwm_val = pwm_min + ((pwm_mid - pwm_min) * plot_y)
-			print(math.ceil(pwm_val))
+			#print(math.ceil(pwm_val))
+			pi.set_PWM_dutycycle(17, pwm_val)
